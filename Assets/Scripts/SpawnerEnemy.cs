@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class SpawnerEnemy : MonoBehaviour
 {
-    [SerializeField] private Enemy _prefabEnemy;
-    [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private SpawnPoint[] _spawnPoints;
     [SerializeField] private float _delaySeconds;
 
     private Coroutine _jobCreate;
@@ -26,21 +25,21 @@ public class SpawnerEnemy : MonoBehaviour
 
         while (true)
         {
-            Transform spawnPoint = GetPandomPointSpawn();
+            SpawnPoint spawnPoint = GetPandomPointSpawn();
             CreateEnemy(spawnPoint);
             yield return delay;
         }
     }
 
-    private void CreateEnemy(Transform spawnPoint)
+    private void CreateEnemy(SpawnPoint spawnPoint)
     {
-        Enemy enemy = Instantiate(_prefabEnemy, spawnPoint.position, spawnPoint.rotation);
-        enemy.Movement.Move(spawnPoint.forward);
+        Enemy enemy = Instantiate(spawnPoint.PrefabEnemy, spawnPoint.transform.position, spawnPoint.transform.rotation);
+        enemy.SetTarget(spawnPoint.Target);
     }
 
-    private Transform GetPandomPointSpawn()
+    private SpawnPoint GetPandomPointSpawn()
     {
-        int indexRandom = Random.Range(0, _spawnPoints.Length - 1);
+        int indexRandom = Random.Range(0, _spawnPoints.Length);
         return _spawnPoints[indexRandom];
     }
 }

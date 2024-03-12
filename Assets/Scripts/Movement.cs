@@ -1,37 +1,19 @@
-using System.Collections;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private float _speed;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _rotationSpeed;
 
-    private Coroutine _jobMoveToDirection;
-
-    private void OnDisable()
+    public void MoveToPosition(Vector3 targetPosition)
     {
-        CancelMoveToDirection();
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * _moveSpeed);
     }
 
-    public void Move(Vector3 direction)
+    public void RotateToPosition(Vector3 targetPosition)
     {
-        CancelMoveToDirection();
-        _jobMoveToDirection = StartCoroutine(MoveToDirection(direction));
-    }
-
-    private IEnumerator MoveToDirection(Vector3 direction)
-    {
-        transform.LookAt(transform.position + direction.normalized, Vector3.up);
-
-        while (true)
-        {
-            transform.Translate(Vector3.forward * Time.deltaTime * _speed);
-            yield return null;
-        }
-    }
-
-    private void CancelMoveToDirection()
-    {
-        if (_jobMoveToDirection != null)
-            StopCoroutine(_jobMoveToDirection);
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * _rotationSpeed);
     }
 }
